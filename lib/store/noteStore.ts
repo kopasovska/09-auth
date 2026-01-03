@@ -1,6 +1,6 @@
 import { create } from 'zustand';
-import { NewNote } from '../api/api';
-import { NoteTag } from '@/types/note';
+
+import { NewNote, NoteTag } from '@/types/note';
 import { persist } from 'zustand/middleware';
 
 interface NoteDraftStore {
