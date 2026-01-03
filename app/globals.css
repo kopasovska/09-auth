@@ -1,0 +1,18 @@
+body {
+  font-family: var(--font-roboto), sans-serif;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  margin: 0;
+  background-color: #f8f9fa;
+}
+
+main {
+  display: flex;
+  flex: 1;
+  height: 100%;
+}
+
+a {
+  text-decoration: none;
+}
