@@ -1,6 +1,5 @@
 'use client';
 
-import { fetchNotes } from '@/lib/api';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -10,6 +9,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import SearchBox from '@/components/SearchBox/SearchBox';
 import Pagination from '@/components/Pagination/Pagination';
 import Link from 'next/link';
+import { fetchNotes } from '@/lib/api/clientApi';
 
 interface NotesClientProps {
   tag?: string;

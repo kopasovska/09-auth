@@ -1,9 +1,9 @@
 export enum NoteTag {
-  Todo = "Todo",
-  Personal = "Personal",
-  Work = "Work",
-  Meeting = "Meeting",
-  Shopping = "Shopping",
+  Todo = 'Todo',
+  Personal = 'Personal',
+  Work = 'Work',
+  Meeting = 'Meeting',
+  Shopping = 'Shopping',
 }
 
 export interface Note {
@@ -13,4 +13,10 @@ export interface Note {
   tag: NoteTag;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface NewNote {
+  title: string;
+  content: string;
+  tag: NoteTag;
 }

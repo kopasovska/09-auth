@@ -5,9 +5,9 @@ import { useId } from 'react';
 import { NoteTag } from '../../types/note';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
-import { createNote } from '@/lib/api';
 import { useRouter } from 'next/navigation';
 import { useNoteDraftStore } from '@/lib/store/noteStore';
+import { createNote } from '@/lib/api/clientApi';
 
 export default function NoteForm() {
   const fieldId = useId();
