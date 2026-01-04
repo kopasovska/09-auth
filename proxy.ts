@@ -19,59 +19,76 @@ export async function proxy(request: NextRequest) {
     pathname.startsWith(route),
   );
 
-  if (!accessToken) {
-    if (refreshToken) {
-      const data = await checkServerSession();
-      const setCookie = data.headers['set-cookie'];
+  if (accessToken) {
+    if (isPublicRoute) {
+      return NextResponse.redirect(new URL('/', request.url));
+    }
+    // private or unknown route → allow
+    return NextResponse.next();
+  }
 
-      if (setCookie) {
-        const cookieArray = Array.isArray(setCookie) ? setCookie : [setCookie];
-        for (const cookieStr of cookieArray) {
+  if (!accessToken && refreshToken) {
+    try {
+      const data = await checkServerSession();
+      const setCookieHeader = data.headers['set-cookie'];
+
+      if (setCookieHeader) {
+        const cookiesArray = Array.isArray(setCookieHeader)
+          ? setCookieHeader
+          : [setCookieHeader];
+
+        for (const cookieStr of cookiesArray) {
           const parsed = parse(cookieStr);
-          const options = {
-            expires: parsed.Expires ? new Date(parsed.Expires) : undefined,
-            path: parsed.Path,
-            maxAge: Number(parsed['Max-Age']),
-          };
-          if (parsed.accessToken)
+
+          const options: {
+            expires?: Date;
+            path?: string;
+            maxAge?: number;
+          } = {};
+
+          if (parsed.Expires) {
+            options.expires = new Date(parsed.Expires);
+          }
+
+          if (parsed.Path) {
+            options.path = parsed.Path;
+          }
+
+          if (parsed['Max-Age']) {
+            const maxAge = Number(parsed['Max-Age']);
+            if (!Number.isNaN(maxAge)) {
+              options.maxAge = maxAge;
+            }
+          }
+
+          if (parsed.accessToken) {
             cookieStore.set('accessToken', parsed.accessToken, options);
-          if (parsed.refreshToken)
+          }
+
+          if (parsed.refreshToken) {
             cookieStore.set('refreshToken', parsed.refreshToken, options);
+          }
         }
 
         if (isPublicRoute) {
-          return NextResponse.redirect(new URL('/', request.url), {
-            headers: {
-              Cookie: cookieStore.toString(),
-            },
-          });
+          return NextResponse.redirect(new URL('/', request.url));
         }
 
         if (isPrivateRoute) {
-          return NextResponse.next({
-            headers: {
-              Cookie: cookieStore.toString(),
-            },
-          });
+          return NextResponse.next();
         }
       }
-    }
+    } catch {}
+  }
 
-    if (isPublicRoute) {
-      return NextResponse.next();
-    }
-
+  if (!accessToken && !refreshToken) {
     if (isPrivateRoute) {
-      return NextResponse.redirect(new URL('/sign-in', request.url));
+      return NextResponse.redirect('/sign-in');
     }
-  }
-
-  if (isPublicRoute) {
-    return NextResponse.redirect(new URL('/', request.url));
-  }
-  if (isPrivateRoute) {
     return NextResponse.next();
   }
+
+  return NextResponse.next();
 }
 
 export const config = {

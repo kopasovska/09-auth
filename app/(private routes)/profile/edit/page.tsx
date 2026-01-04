@@ -29,7 +29,7 @@ const EditProfilePage = () => {
   };
 
   const handleCancel = () => {
-    router.push('/profile');
+    router.back();
   };
 
   return (
@@ -51,7 +51,7 @@ const EditProfilePage = () => {
             <input
               id="username"
               type="text"
-              defaultValue={user.username}
+              value={user.username}
               className={css.input}
               onChange={handleChange}
             />
